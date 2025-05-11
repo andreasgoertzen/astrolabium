@@ -7,6 +7,11 @@
     "build": "vite build",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.6",
+    "daisyui": "^5.0.35",
+    "tailwindcss": "^4.1.6"
+  },
   "devDependencies": {
     "vite": "^6.3.5"
   },
