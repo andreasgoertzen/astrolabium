@@ -1,8 +1,8 @@
 import './style.css'
 import javascriptLogo from '/src/assets/svg/javascript.svg'
-import viteLogo from '/svg/vite.svg'
 import { setupCounter } from '/src/util/counter.js'
-import { showBarChart } from "/src/viz/bar.js";
+import viteLogo from '/svg/vite.svg'
+import exampleBars from "/src/viz/exampleBars.js";
 
 document.querySelector('#app').innerHTML = `
   <div>
@@ -12,10 +12,10 @@ document.querySelector('#app').innerHTML = `
         <h class="text-xl">Moin Vite!</h1>
         <button class="btn btn-primary" id="counter" type="button"></button>
       </div>
-      <div class="border p-3 mt-2" id="viz-container"></div>
+      <div id="viz-container"></div>
   </div>
 `
 
 setupCounter(document.querySelector('#counter'));
 
-showBarChart();
+exampleBars();
