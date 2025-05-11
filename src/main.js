@@ -2,7 +2,7 @@ import './style.css'
 import javascriptLogo from '/src/assets/svg/javascript.svg'
 import { setupCounter } from '/src/util/counter.js'
 import viteLogo from '/svg/vite.svg'
-import exampleStarMap from "@/viz/exampleStarMap.js";
+import exampleAstro from "@/viz/exampleAstro.js";
 
 document.querySelector('#app').innerHTML = `
   <div>
@@ -17,4 +17,4 @@ document.querySelector('#app').innerHTML = `
 `
 setupCounter(document.querySelector('#counter'));
 
-exampleStarMap();
+exampleAstro()
