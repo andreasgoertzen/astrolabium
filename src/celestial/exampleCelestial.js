@@ -1,16 +1,18 @@
 import { bvToHex } from "@/util/bvToHex.js";
+import { log, logj } from "@/util/log.js";
 import Zoomer from "@/util/Zoomer.js";
 import * as d3 from 'd3';
 
 export default async () => {
   const config = {}
   const data = {
-    stars: (await d3.json("/data/stars.14.json")).features,
+    constellations: (await d3.json("/data/constellations.lines.json")).features,
     graticule: d3.geoGraticule().step([10, 10])(),
+    stars: (await d3.json("/data/stars.6.json")).features,
     selectedStars: []
   };
   const scale = {
-    magnitude: d3.scaleLinear(d3.extent(data.stars, d => d.properties.mag), [2, 0.1])
+    magnitude: d3.scaleLinear(d3.extent(data.stars, d => d.properties.mag), [4, 0.5])
   }
 
   let width = window.innerWidth;
@@ -30,8 +32,6 @@ export default async () => {
     x.properties.color = bvToHex(x.properties.bv);
     x.properties.r = scale.magnitude(x.properties.mag);
   })
-  console.log(data.stars);
-  console.log(JSON.stringify(data.stars[0].properties, null, 2));
 
   const render = () => {
     ctx.clearRect(0, 0, width, height);
@@ -43,16 +43,20 @@ export default async () => {
     ctx.beginPath();
     geoPath(data.graticule);
     ctx.stroke();
-    data.selectedStars.forEach(s => {
-      ctx.fillStyle = s.properties.color;
+    data.selectedStars.forEach(x => {
+      ctx.fillStyle = x.properties.color;
       ctx.beginPath();
-      geoPath(s.geometry, s.properties.pointRadius);
+      geoPath(x.geometry, x.properties.pointRadius);
       // context.arc(pt[0], pt[1], s.r * projection.scale() * .002, 0, 2 * Math.PI);
       ctx.fill();
     })
+    data.constellations.forEach(x => {
+      ctx.beginPath();
+      geoPath(x.geometry);
+      ctx.stroke();
+    })
   }
   const onScaleChanged = scaleFactor => {
-    console.log('recalculate')
     data.selectedStars = data.stars.filter(x => x.properties.r * scaleFactor > .5);
     data.selectedStars.forEach(x => x.properties.pointRadius = x.properties.r * scaleFactor);
   }
