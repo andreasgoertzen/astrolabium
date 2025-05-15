@@ -1,20 +1,8 @@
 import './style.css'
-import javascriptLogo from '/src/assets/svg/javascript.svg'
-import { setupCounter } from '/src/util/counter.js'
-import viteLogo from '/svg/vite.svg'
+import exampleCelestial from "@/celestial/exampleCelestial.js";
 import exampleAstro from "@/viz/exampleAstro.js";
+import exampleGlobe from "@/viz/exampleGlobe.jsx";
+import exampleVersor from "@/viz/exampleVersor.js";
+import exampleVersorDirect from "@/viz/exampleVersorDirect.js";
 
-document.querySelector('#app').innerHTML = `
-  <div>
-      <div class="flex flex-row gap-2">
-        <img src="${viteLogo}" class="logo" alt="Vite logo" />
-        <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-        <h1 class="text-3xl font-bold">Astrolabium</h1>
-        <button class="btn btn-primary" id="counter" type="button"></button>
-      </div>
-      <div id="viz-container"></div>
-  </div>
-`
-setupCounter(document.querySelector('#counter'));
-
-exampleAstro()
+exampleCelestial();

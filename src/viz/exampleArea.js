@@ -13,7 +13,7 @@ export default async function() {
   const marginBottom = 30;
   const marginLeft = 40;
 
-  const svg = d3.select("#viz-container")
+  const svg = d3.select("#container")
     .append("svg")
     .attr("width", width)
     .attr("height", height)

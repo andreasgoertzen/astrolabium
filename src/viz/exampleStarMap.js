@@ -36,13 +36,10 @@ export default async function() {
     .from(data.map(projection))
     .voronoi([0, 0, width, height]);
 
-  const svg = d3.select("#viz-container")
+  const svg = d3.select("#container")
     .append("svg")
-    .attr("width", width)
-    .attr("height", height)
+    .attr("preserveAspectRatio", "xMinYMin meet")
     .attr("viewBox", [0, 0, width, height])
-    .attr("style", "display: block; margin: 0 -14px; width: 100%; height: auto; font: 10px sans-serif; color: white; background: radial-gradient(#081f4b 0%, #061616 100%);")
-    .attr("text-anchor", "middle")
     .attr("fill", "currentColor");
 
   svg.append("path")

@@ -8,7 +8,7 @@ export default async function() {
   const width = 270;
   const height = 150;
 
-  const svg = d3.select("#viz-container")
+  const svg = d3.select("#container")
     .append("svg")
     .attr("width", width)
     .attr("height", height)
@@ -24,7 +24,7 @@ export default async function() {
     .attr("y", d => height - 3 * d)       // Bar heights
     .attr("width", 25)                 // Bar width
     .attr("height", d => 3 * d)      // Bar height
-    .attr("fill", color("teal"));             // Bar color
+    .attr("fill", color("teal").brighter());             // Bar color
 
   // Add Data Labels
   svg.selectAll("text")
@@ -35,6 +35,6 @@ export default async function() {
     .attr("y", d => height - 3 * d - 3)   // Position above the bars
     .text(d => d)                    // Text value
     .attr("font-size", "12px")         // Font size
-    .attr("fill", color("plum"))             // Label color
+    .attr("fill", color("plum").darker())             // Label color
     .attr("text-anchor", "middle");    // Text alignment
 }
