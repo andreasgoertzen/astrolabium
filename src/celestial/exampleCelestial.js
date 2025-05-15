@@ -6,9 +6,11 @@ import * as d3 from 'd3';
 export default async () => {
   const config = {}
   const data = {
-    constellations: (await d3.json("/data/constellations.lines.json")).features,
+    constellations: (await d3.json("/data/constellations.json")).features,
+    constellationLines: (await d3.json("/data/constellations.lines.json")).features,
     graticule: d3.geoGraticule().step([10, 10])(),
     stars: (await d3.json("/data/stars.6.json")).features,
+    starNames: (await d3.json("/data/starnames.json")),
     selectedStars: []
   };
   const scale = {
@@ -21,8 +23,12 @@ export default async () => {
   const container = d3.select("#container");
   const canvas = container.append('canvas');
   const ctx = canvas.node().getContext('2d');
-  const projection = d3.geoOrthographic();
-  const geoPath = d3.geoPath()
+  const projection = d3
+    .geoOrthographic()
+    .clipAngle(90)
+  ;
+  const geoPath = d3
+    .geoPath()
     .projection(projection)
     .context(ctx)
     .pointRadius((d, pointRadius) => pointRadius || 1);
@@ -32,6 +38,27 @@ export default async () => {
     x.properties.color = bvToHex(x.properties.bv);
     x.properties.r = scale.magnitude(x.properties.mag);
   })
+
+  function isPointVisible(coords) {
+    // D3's Projektion gibt null zurück, wenn der Punkt nicht sichtbar ist
+    // Aber wir wollen eine etwas robustere Lösung
+
+    // Berechne den "dot product" mit der Sichtrichtung
+    const lambda = coords[0] * Math.PI / 180;
+    const phi = coords[1] * Math.PI / 180;
+    const rotation = projection.rotate();
+    const rotLambda = rotation[0] * Math.PI / 180;
+    const rotPhi = rotation[1] * Math.PI / 180;
+
+    // Einfache Version: Berechne den Winkel zwischen dem Punkt und dem Zentrum der Kugel
+    const angle = Math.acos(
+      Math.sin(phi) * Math.sin(-rotPhi) +
+      Math.cos(phi) * Math.cos(-rotPhi) * Math.cos(lambda - (-rotLambda))
+    );
+
+    // Sichtbar, wenn der Winkel kleiner als 90° ist
+    return angle < Math.PI / 2;
+  }
 
   const render = () => {
     ctx.clearRect(0, 0, width, height);
@@ -43,18 +70,58 @@ export default async () => {
     ctx.beginPath();
     geoPath(data.graticule);
     ctx.stroke();
+    data.constellationLines.forEach(x => {
+      ctx.beginPath();
+      geoPath(x.geometry);
+      ctx.stroke();
+    })
     data.selectedStars.forEach(x => {
       ctx.fillStyle = x.properties.color;
       ctx.beginPath();
       geoPath(x.geometry, x.properties.pointRadius);
       // context.arc(pt[0], pt[1], s.r * projection.scale() * .002, 0, 2 * Math.PI);
       ctx.fill();
+      const starName = data.starNames[x.id]?.name;
+      if (starName && x.properties.pointRadius > 2.3) {
+        const coordinates = x.geometry.coordinates;
+        if (isPointVisible(coordinates)) {
+          const pixelCoords = projection([coordinates[0], coordinates[1]]);
+          // log(coords)
+          ctx.font = '14px sans-serif';
+          ctx.fillStyle = d3.color('darkkhaki');
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'bottom';
+          ctx.fillText(starName, pixelCoords[0], pixelCoords[1]);
+        }
+      }
     })
+
     data.constellations.forEach(x => {
-      ctx.beginPath();
-      geoPath(x.geometry);
-      ctx.stroke();
+      const coordinates = x.geometry.coordinates;
+      if (isPointVisible(coordinates)) {
+        const pixelCoords = projection([coordinates[0], coordinates[1]]);
+        // log(coords)
+        ctx.font = '14px sans-serif';
+        ctx.fillStyle = d3.color('darkcyan');
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(x.properties.de, pixelCoords[0], pixelCoords[1]);
+      }
     })
+
+    // data.starNames.forEach(x => {
+    //   const coordinates = x.geometry.coordinates;
+    //   if (isPointVisible(coordinates)) {
+    //     const pixelCoords = projection([coordinates[0], coordinates[1]]);
+    //     // log(coords)
+    //     ctx.font = '14px sans-serif';
+    //     ctx.fillStyle = d3.color('darkcyan');
+    //     ctx.textAlign = 'center';
+    //     ctx.textBaseline = 'middle';
+    //     ctx.fillText(x.properties.de, pixelCoords[0], pixelCoords[1]);
+    //   }
+    // })
+
   }
   const onScaleChanged = scaleFactor => {
     data.selectedStars = data.stars.filter(x => x.properties.r * scaleFactor > .5);
