@@ -32,7 +32,7 @@ export default async () => {
     .projection(projection)
     .context(ctx)
     .pointRadius((d, pointRadius) => pointRadius || 1);
-
+  logj(data.stars[0])
   // prepare data
   data.stars.forEach(x => {
     x.properties.color = bvToHex(x.properties.bv);
@@ -82,7 +82,7 @@ export default async () => {
       // context.arc(pt[0], pt[1], s.r * projection.scale() * .002, 0, 2 * Math.PI);
       ctx.fill();
       const starName = data.starNames[x.id]?.name;
-      if (starName && x.properties.pointRadius > 2.3) {
+      if (starName && x.properties.pointRadius > 2.4) {
         const coordinates = x.geometry.coordinates;
         if (isPointVisible(coordinates)) {
           const pixelCoords = projection([coordinates[0], coordinates[1]]);
@@ -140,6 +140,21 @@ export default async () => {
     zoomer.unityScale = projection.scale();
     render();
   }
+
+
+  function updateRotationBasedOnTime() {
+    const now = new Date();
+    const hour = now.getUTCHours() + now.getUTCMinutes() / 60;
+
+    // Berechne Sternzeit (vereinfacht)
+    const siderealTime = (hour * 15) % 360; // 15° pro Stunde
+
+    // Setze Rotation für aktuellen Himmelsausschnitt
+    projection.rotate([siderealTime, viewerLatitude, 0]);
+    render();
+  }
+
+
   onScaleChanged(1);
   onResize();
   window.addEventListener('resize', onResize)
