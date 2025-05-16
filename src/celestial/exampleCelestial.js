@@ -1,5 +1,5 @@
 import { bvToHex } from "@/util/bvToHex.js";
-import { log, logj } from "@/util/log.js";
+import { logj } from "@/util/log.js";
 import Zoomer from "@/util/Zoomer.js";
 import * as d3 from 'd3';
 
@@ -8,7 +8,7 @@ export default async () => {
   const data = {
     constellations: (await d3.json("/data/constellations.json")).features,
     constellationLines: (await d3.json("/data/constellations.lines.json")).features,
-    graticule: d3.geoGraticule().step([10, 10])(),
+    graticuleLines: d3.geoGraticule().step([15, 10]).lines(),
     stars: (await d3.json("/data/stars.6.json")).features,
     starNames: (await d3.json("/data/starnames.json")),
     selectedStars: []
@@ -26,13 +26,14 @@ export default async () => {
   const projection = d3
     .geoOrthographic()
     .clipAngle(90)
+    .reflectX(true)
   ;
   const geoPath = d3
     .geoPath()
     .projection(projection)
     .context(ctx)
     .pointRadius((d, pointRadius) => pointRadius || 1);
-  logj(data.stars[0])
+  // logj(data.graticuleLines)
   // prepare data
   data.stars.forEach(x => {
     x.properties.color = bvToHex(x.properties.bv);
@@ -60,6 +61,19 @@ export default async () => {
     return angle < Math.PI / 2;
   }
 
+  logj(data.graticuleLines);
+
+  const renderText = (label, coords) => {
+    if (isPointVisible(coords)) {
+      const pixelCoords = projection(coords);
+      ctx.font = '14px sans-serif';
+      ctx.fillStyle = d3.color('darkkhaki');
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'center';
+      ctx.fillText(label, pixelCoords[0], pixelCoords[1]);
+    }
+  }
+
   const render = () => {
     ctx.clearRect(0, 0, width, height);
     ctx.beginPath();
@@ -68,8 +82,29 @@ export default async () => {
     ctx.fillRect(0, 0, width, height);
     ctx.strokeStyle = d3.color('gray').darker(0.5);
     ctx.beginPath();
-    geoPath(data.graticule);
+    data.graticuleLines.forEach((x, i) => {
+
+        if (x.coordinates[0][0] === x.coordinates[1][0]) {
+          // lon
+          const coords = x.coordinates[Math.floor(x.coordinates.length / 2)];
+          if (coords[0] !== 0) {
+            for (let i = -60; i <= 60; i += 30) {
+              renderText((coords[0] / 15 + 24) % 24, [coords[0], i]);
+            }
+          }
+        } else {
+          x.coordinates.forEach((coords, i) => {
+            if (coords[0] % 90 === 0) {
+              renderText(coords[1], coords);
+            }
+          })
+          // const coords = x.coordinates[Math.floor(x.coordinates.length / 2)];
+        }
+        geoPath(x);
+      }
+    );
     ctx.stroke();
+
     data.constellationLines.forEach(x => {
       ctx.beginPath();
       geoPath(x.geometry);
