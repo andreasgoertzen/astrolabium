@@ -1,5 +1,6 @@
-import { bvToHex } from "@/util/bvToHex.js";
+import { bvToHex, isPointVisible } from "@/util/calc.js";
 import { logj } from "@/util/log.js";
+import { renderTextGraticule } from "@/util/render.js";
 import Zoomer from "@/util/Zoomer.js";
 import * as d3 from 'd3';
 
@@ -33,83 +34,65 @@ export default async () => {
     .projection(projection)
     .context(ctx)
     .pointRadius((d, pointRadius) => pointRadius || 1);
-  // logj(data.graticuleLines)
+
   // prepare data
   data.stars.forEach(x => {
     x.properties.color = bvToHex(x.properties.bv);
     x.properties.r = scale.magnitude(x.properties.mag);
   })
 
-  function isPointVisible(coords) {
-    // D3's Projektion gibt null zurück, wenn der Punkt nicht sichtbar ist
-    // Aber wir wollen eine etwas robustere Lösung
-
-    // Berechne den "dot product" mit der Sichtrichtung
-    const lambda = coords[0] * Math.PI / 180;
-    const phi = coords[1] * Math.PI / 180;
-    const rotation = projection.rotate();
-    const rotLambda = rotation[0] * Math.PI / 180;
-    const rotPhi = rotation[1] * Math.PI / 180;
-
-    // Einfache Version: Berechne den Winkel zwischen dem Punkt und dem Zentrum der Kugel
-    const angle = Math.acos(
-      Math.sin(phi) * Math.sin(-rotPhi) +
-      Math.cos(phi) * Math.cos(-rotPhi) * Math.cos(lambda - (-rotLambda))
-    );
-
-    // Sichtbar, wenn der Winkel kleiner als 90° ist
-    return angle < Math.PI / 2;
-  }
-
-  logj(data.graticuleLines);
-
-  const renderText = (label, coords) => {
-    if (isPointVisible(coords)) {
-      const pixelCoords = projection(coords);
-      ctx.font = '14px sans-serif';
-      ctx.fillStyle = d3.color('darkkhaki');
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'center';
-      ctx.fillText(label, pixelCoords[0], pixelCoords[1]);
-    }
-  }
-
   const render = () => {
     ctx.clearRect(0, 0, width, height);
+    // black background
     ctx.beginPath();
     ctx.fillStyle = '#000';
     ctx.beginPath();
     ctx.fillRect(0, 0, width, height);
+    // graticule
     ctx.strokeStyle = d3.color('gray').darker(0.5);
     ctx.beginPath();
-    data.graticuleLines.forEach((x, i) => {
-
+    data.graticuleLines.forEach(x => {
         if (x.coordinates[0][0] === x.coordinates[1][0]) {
           // lon
           const coords = x.coordinates[Math.floor(x.coordinates.length / 2)];
-          if (coords[0] !== 0) {
+          if (coords[0] %90 !== 0) {
             for (let i = -60; i <= 60; i += 30) {
-              renderText((coords[0] / 15 + 24) % 24, [coords[0], i]);
+              renderTextGraticule(
+                projection,
+                [coords[0], i],
+                ctx,
+                (coords[0] / 15 + 24) % 24,
+                d3.color('lightsteelblue')
+              );
             }
           }
         } else {
+          // lat
           x.coordinates.forEach((coords, i) => {
             if (coords[0] % 90 === 0) {
-              renderText(coords[1], coords);
+              renderTextGraticule(
+                projection,
+                coords,
+                ctx,
+                coords[1],
+                d3.color('darkkhaki')
+              );
             }
           })
-          // const coords = x.coordinates[Math.floor(x.coordinates.length / 2)];
         }
         geoPath(x);
       }
     );
     ctx.stroke();
 
+    // constellation lines
     data.constellationLines.forEach(x => {
       ctx.beginPath();
       geoPath(x.geometry);
       ctx.stroke();
     })
+
+    // stars
     data.selectedStars.forEach(x => {
       ctx.fillStyle = x.properties.color;
       ctx.beginPath();
@@ -119,7 +102,7 @@ export default async () => {
       const starName = data.starNames[x.id]?.name;
       if (starName && x.properties.pointRadius > 2.4) {
         const coordinates = x.geometry.coordinates;
-        if (isPointVisible(coordinates)) {
+        if (isPointVisible(projection, coordinates)) {
           const pixelCoords = projection([coordinates[0], coordinates[1]]);
           // log(coords)
           ctx.font = '14px sans-serif';
@@ -131,11 +114,11 @@ export default async () => {
       }
     })
 
+    // constellation names
     data.constellations.forEach(x => {
       const coordinates = x.geometry.coordinates;
-      if (isPointVisible(coordinates)) {
+      if (isPointVisible(projection, coordinates)) {
         const pixelCoords = projection([coordinates[0], coordinates[1]]);
-        // log(coords)
         ctx.font = '14px sans-serif';
         ctx.fillStyle = d3.color('darkcyan');
         ctx.textAlign = 'center';
@@ -143,20 +126,6 @@ export default async () => {
         ctx.fillText(x.properties.de, pixelCoords[0], pixelCoords[1]);
       }
     })
-
-    // data.starNames.forEach(x => {
-    //   const coordinates = x.geometry.coordinates;
-    //   if (isPointVisible(coordinates)) {
-    //     const pixelCoords = projection([coordinates[0], coordinates[1]]);
-    //     // log(coords)
-    //     ctx.font = '14px sans-serif';
-    //     ctx.fillStyle = d3.color('darkcyan');
-    //     ctx.textAlign = 'center';
-    //     ctx.textBaseline = 'middle';
-    //     ctx.fillText(x.properties.de, pixelCoords[0], pixelCoords[1]);
-    //   }
-    // })
-
   }
   const onScaleChanged = scaleFactor => {
     data.selectedStars = data.stars.filter(x => x.properties.r * scaleFactor > .5);
