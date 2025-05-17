@@ -75,7 +75,8 @@ export default async () => {
 
     // graticule
     ctx.beginPath();
-    ctx.strokeStyle = d3.color('gray').darker(0.5);
+    ctx.lineWidth = .8;
+    ctx.strokeStyle = d3.color('rgba(200,100,200, .5)');
     data.graticuleLines.forEach(x => geoPath(x));
     ctx.stroke();
 
