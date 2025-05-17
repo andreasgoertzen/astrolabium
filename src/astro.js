@@ -4,23 +4,24 @@ import { logj } from "@/util/log.js";
 import { renderTextGraticule } from "@/util/render.js";
 import Zoomer from "@/util/Zoomer.js";
 import simplify from "@turf/simplify";
+import axios from "axios";
 import * as d3 from 'd3';
 
 export default async () => {
   let showMilkyWay = true;
 
   const data = {
-    asterisms: (await d3.json("/data/asterisms.json")).features,
-    constellations: (await d3.json("/data/constellations.json")).features,
-    constellationLines: (await d3.json("/data/constellations.lines.json")).features,
-    constellationBounds: (await d3.json("/data/constellations.borders.json")).features,
-    dsonames: (await d3.json("/data/dsonames.json")),
+    asterisms: (await axios("/data/asterisms.json")).data.features,
+    constellations: (await axios("/data/constellations.json")).data.features,
+    constellationLines: (await axios("/data/constellations.lines.json")).data.features,
+    constellationBounds: (await axios("/data/constellations.borders.json")).data.features,
+    dsonames: (await axios("/data/dsonames.json")).data,
     graticuleLines: d3.geoGraticule().step([15, 10]).lines(),
-    messier: (await d3.json("/data/messier.json")).features,
-    milkyWay: (await d3.json("/data/milkyway.json")).features,
+    messier: (await axios("/data/messier.json")).data.features,
+    milkyWay: (await axios("/data/milkyway.json")).data.features,
     milkyWaySimple: [],
-    stars: (await d3.json("/data/stars.6.json")).features,
-    starNames: (await d3.json("/data/starnames.json")),
+    stars: (await axios("/data/stars.6.json")).data.features,
+    starNames: (await axios("/data/starnames.json")).data,
     selectedStars: []
   };
   const scale = {
