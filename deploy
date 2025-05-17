@@ -1,0 +1,9 @@
+SERVER=ubuntu@histouri.de
+yarn build
+exitCode=$?
+if [ $exitCode -ne 0 ]; then
+  echo "build error"
+  exit
+fi
+rsync -avzq --delete --chmod='Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r' ./dist/ $SERVER:/home/ubuntu/prod/astro/
+echo '⚔️ Astrolabium deployed.'
