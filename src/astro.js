@@ -1,4 +1,4 @@
-import { BACKGROUND_COLOR, PROJECTION_COLOR } from "@/astro/const.js";
+import { BACKGROUND_COLOR, PROJECTION_COLOR } from "@/config/const.js";
 import { bvToHex, isPointVisible } from "@/util/calc.js";
 import { logj } from "@/util/log.js";
 import { renderTextGraticule } from "@/util/render.js";
