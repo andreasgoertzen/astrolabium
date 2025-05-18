@@ -1,50 +1,44 @@
 import versor from "@/util/versor.js";
-import * as d3 from 'd3';
+
+const eventPoint = (ev) => {
+  let clientX = ev.clientX;
+  let clientY = ev.clientY;
+  if (ev.touches && ev.touches.length > 0) {
+    clientX = ev.touches[0].clientX;
+    clientY = ev.touches[0].clientY;
+  }
+  return [clientX, clientY];
+}
 
 export default class Zoomer {
   northUp = false;
   unityScale;
   projection;
   render;
-  onScaleChanged;
   r0;
   v0;
   q0;
 
-  constructor(svg, projection, render, onScaleChanged) {
-    this.projection = projection;
-    this.unityScale = projection.scale();
-    this.render = render;
-    this.onScaleChanged = onScaleChanged;
-    const zoomFkt = d3.zoom()
-      .scaleExtent([.5, 125])
-      .on('start', ev => this.zoomStarted(ev))
-      .on('zoom', ev => this.zoomed(ev));
-    svg.call(zoomFkt);
-  }
-
   zoomStarted(ev) {
-    this.v0 = versor.cartesian(this.projection.invert(d3.pointer(ev)));
+    if (!this.projection) return;
+    this.v0 = versor.cartesian(this.projection.invert(eventPoint(ev.sourceEvent)));
     this.r0 = this.projection.rotate();
     this.q0 = versor(this.r0);
   }
 
   zoomed(ev) {
+    if (!this.projection || !this.render) return;
     const scale = ev.transform.k * this.unityScale;
     if (scale !== this.projection.scale()) {
       this.projection.scale(scale);
-      this.onScaleChanged && this.onScaleChanged(scale / this.unityScale);
     }
-    const v1 = versor.cartesian(this.projection.rotate(this.r0).invert(d3.pointer(ev)));
+    const v1 = versor.cartesian(this.projection.rotate(this.r0).invert(eventPoint(ev.sourceEvent)));
     const q1 = versor.multiply(this.q0, versor.delta(this.v0, v1))
     const rotation = versor.rotation(q1);
     if (this.northUp) {
       rotation[2] = 0; // Don't rotate on Z axis
     }
     this.projection.rotate(rotation);
-    this.render({
-      scale,
-      rotation
-    });
+    this.render();
   }
 }
