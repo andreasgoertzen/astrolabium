@@ -17,7 +17,7 @@ export default class Zoomer {
     this.render = render;
     this.onScaleChanged = onScaleChanged;
     const zoomFkt = d3.zoom()
-      .scaleExtent([0.1, 1e3])
+      .scaleExtent([.5, 125])
       .on('start', ev => this.zoomStarted(ev))
       .on('zoom', ev => this.zoomed(ev));
     svg.call(zoomFkt);

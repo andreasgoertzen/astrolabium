@@ -1,0 +1,27 @@
+# Astrolabium
+
+## Sterne - Kataloge - VizieR
+- J/A+A/595/A23: The IAU Catalog of Star Names
+    - https://www.pas.rochester.edu/~emamajek/WGSN/IAU-CSN.txt
+- IV/27: HD-DM-GC-HR-HIP-Bayer-Flamsteed Cross Index
+- V/50: Bright Star Catalogue (HR)
+- B/wds: WDS (Washington Double Star)
+
+## Daten
+https://decovar.dev/blog/2022/02/26/astronomy-databases-tap-adql/[Querying astronomy databases in ADQL via TAP
+^]
+
+### ADQL
+https://simbad.u-strasbg.fr/simbad/tap/help/adqlHelp.html[simbad-adql-help^]
+https://simbad.cds.unistra.fr/simbad/sim-tap/[simbad-adql-ui^]
+https://simbad.u-strasbg.fr/simbad/tap/tapsearch.html[simbad-tables^]
+https://tapvizier.cds.unistra.fr/adql/help.html[vizier-adql-help^]
+https://tapvizier.cds.unistra.fr/adql/[vizier-adql-ui^]
+https://exoplanetarchive.ipac.caltech.edu/docs/TAP/usingTAP.html#PS[nasa-exoplanet-archive^]
+https://padc.obspm.fr/[Paris Astronomical Data Centre]
+https://cosmos.esa.int/web/gaia-users/archive/programmatic-access[Gaia]
+https://www.cosmos.esa.int/web/gaia-users/archive/writing-queries[gaia-writing-queries^]
+https://github.com/cds-astro/aladin-lite[aladin-lite^]
+https://alasky.cds.unistra.fr/hips-image-services/hips2fits[hips2fits]
+
+
