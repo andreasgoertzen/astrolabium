@@ -2,8 +2,8 @@ import * as d3 from 'd3';
 import { geoAitoff } from "d3-geo-projection";
 
 export const ZOOM_SCALE_EXTENT = [.5, 125];
-export const PROJECTION_COLOR = d3.color('#2929a3').darker(.5);
-export const DEFAULT_SHOW_MILKY_WAY = false;
+export const PROJECTION_COLOR = d3.color('black').darker(.5);
+export const DEFAULT_SHOW_MILKY_WAY = true;
 export const DEFAULT_PROJECTION = 'Aitoff';
 export const PROJECTIONS = {
   Aitoff: geoAitoff,

@@ -71,7 +71,7 @@ export default async () => {
     .style('overflow-y', 'auto');
 
   info.html(`
-        <div class="p-2 rounded bg-orange-400">
+        <div class="p-2 rounded bg-amber-600 ">
             <div id="radec"></div>
             <div>
             Projektion
@@ -230,7 +230,7 @@ export default async () => {
     }
 
     // messier objects
-    ctx.strokeStyle = d3.color('red');
+    ctx.strokeStyle = d3.color('sandybrown');
     for (const x of data.messier) {
       const c = x.geometry.coordinates;
       if (!isPointVisible(p, c)) continue;
@@ -240,7 +240,7 @@ export default async () => {
       ctx.stroke();
       // if (scaleMag(x.properties.mag) * zoomFactor < .4) continue;
       ctx.font = '16px sans-serif';
-      ctx.fillStyle = d3.color('red').darker(.5);
+      ctx.fillStyle = d3.color('sandybrown');
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
       const dsoname = data.dsonames[x.properties.desig]
