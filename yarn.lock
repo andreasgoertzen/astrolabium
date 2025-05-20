@@ -1892,6 +1892,11 @@
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.16.tgz#8ebe53d69efada7044454e3305c19017d97ced2a"
   integrity sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==
 
+aladin-lite@^3.6.5:
+  version "3.6.5"
+  resolved "https://registry.yarnpkg.com/aladin-lite/-/aladin-lite-3.6.5.tgz#70a27c704b9480755d073cab2e75b8108a9bc77c"
+  integrity sha512-6AShIjryK0jKJXPSSL1c4ULPmuXeU2dgnGITayZJZ9GmydJQiqQUy5AbwZ+aPFV5B+uYi+JeAopCHUAnB/1MaA==
+
 astronomy-engine@^2.1.19:
   version "2.1.19"
   resolved "https://registry.yarnpkg.com/astronomy-engine/-/astronomy-engine-2.1.19.tgz#41b9fd2afb7eba3485e3803cbd9033011f8557af"
