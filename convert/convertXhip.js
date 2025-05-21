@@ -1,5 +1,5 @@
 import axios from "axios";
-import { writeJson } from "./convertUtil.js";
+import { writeJson } from "@/util/convertUtil.js";
 
 const q = `SELECT HIP as hip, RAJ2000 as ra, DEJ2000 as dec, "V/137D/XHIP"."Vmag" as mag, "V/137D/XHIP"."B-V" as bv, Name as name FROM "V/137D/XHIP" where "V/137D/XHIP"."Vmag" <= 8`;
 

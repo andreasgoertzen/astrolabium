@@ -1,5 +1,5 @@
 import axios from "axios";
-import { logJson } from "./convertUtil.js";
+import { logJson } from "@/util/convertUtil.js";
 import { XMLParser } from "fast-xml-parser";
 
 const search = encodeURIComponent('altair');

@@ -1,4 +1,4 @@
-import { readJson, writeJson } from "./convertUtil.js";
+import { readJson, writeJson } from "@/util/convertUtil.js";
 
 const raw = await readJson('download/bsc5.json')
 console.log(`object amount: ${raw.length}`)

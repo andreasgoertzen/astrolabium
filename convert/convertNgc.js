@@ -1,5 +1,5 @@
 import axios from "axios";
-import { writeJson } from "./convertUtil.js";
+import { writeJson } from "@/util/convertUtil.js";
 
 const q = `SELECT top 10 * FROM "VII/1B/catalog"`;
 

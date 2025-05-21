@@ -1,5 +1,5 @@
 import axios from "axios";
-import { writeJson } from "./convertUtil.js";
+import { writeJson } from "@/util/convertUtil.js";
 
 const q = `SELECT top 2 * FROM "VII/118/names"`;
 
