@@ -11,3 +11,19 @@ export const renderTextGraticule = (p, c, ctx, label, color) => {
     ctx.fillText(label, pc[0], pc[1]);
   }
 }
+
+export const requestFullscreen = async () => {
+  const elem = d3.select('#container').node();
+  const isFullscreen = !!document.fullscreenElement;
+  if (isFullscreen) {
+    await document.exitFullscreen();
+  } else {
+    if (elem.requestFullscreen) {
+      await elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+      await elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+      await elem.msRequestFullscreen();
+    }
+  }
+}
